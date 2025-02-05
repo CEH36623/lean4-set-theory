@@ -8,3 +8,6 @@ name = "Lean4SetTheory"
 [[lean_exe]]
 name = "lean4-set-theory"
 root = "Main"
+
+[dependencies]
+mathlib = { git = "https://github.com/leanprover-community/mathlib4" }
