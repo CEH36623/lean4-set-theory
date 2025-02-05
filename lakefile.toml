@@ -1,0 +1,10 @@
+name = "lean4-set-theory"
+version = "0.1.0"
+defaultTargets = ["lean4-set-theory"]
+
+[[lean_lib]]
+name = "Lean4SetTheory"
+
+[[lean_exe]]
+name = "lean4-set-theory"
+root = "Main"
