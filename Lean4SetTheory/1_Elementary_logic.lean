@@ -37,16 +37,16 @@ open Classical
 
 --Theorem 2
 -- (a) Law of Double Negation (D.N.)
-theorem DN : ¬¬p ↔ p :=
+theorem DN : ¬¬p ↔ p := --
   Iff.intro
     (fun hnnp : ¬¬p =>  -- (p → False) → False
       byContradiction fun hnp : ¬p => show False from hnnp hnp
     )
-    (fun hp : p =>  --((p → False) → False ) → False
-      sorry --
+    (fun (hp : p) (h : p → False) =>
+      False.elim (h hp)
     )
 
--- (b) Commutative Laws (Com.) (Com - namespace ?)
+-- (b) Commutative Laws (Com.)
 theorem ComAnd : p ∧ q ↔ q ∧ p :=
   Iff.intro
     (fun h : p ∧ q =>
@@ -191,10 +191,37 @@ theorem CDAnd : (p → q) ∧ (r → s) → (p ∧ r → q ∧ s) :=
 
 -- (b) Destructive Dilemmas (D.D.)
 theorem DDOr : (p → q) ∧ (r → s) → (¬q ∨ ¬ s → ¬p ∨ ¬r) :=
-  fun (h₁ : (p → q) ∧ (r → s)) (h₂ : ¬q ∨ ¬ s) =>
-  sorry
+  fun (h₁ : (p → q) ∧ (r → s)) (h₂ : ¬q ∨ ¬s) =>
+  Or.elim (em p)
+  (fun hp : p =>
+    Or.elim (em r)
+    (fun hr : r =>
+    have hq : q := h₁.left hp
+    have hs : s := h₁.right hr
+    have hnqs : ¬(q ∧ s) := (Iff.mpr (DeM q s)) h₂
+    False.elim (hnqs (And.intro hq hs))
+    )
+    (fun hnr : ¬r => Or.intro_right (¬p) hnr)
+  )
+  (fun hnp : ¬p => Or.intro_left (¬r) hnp )
+
+
 theorem DDAnd : (p → q) ∧ (r → s) → (¬q ∧ ¬ s → ¬p ∧ ¬r) :=
-  sorry
+  fun (h₁ :(p → q) ∧ (r → s) ) (h₂ : ¬q ∧ ¬ s ) =>
+    Or.elim (em p)
+    (fun hp : p =>
+    have hq : q := h₁.left hp
+    False.elim (h₂.left hq))
+    (fun hnp : ¬p =>
+      Or.elim (em r)
+      (fun hr :r =>
+      have hs : s := h₁.right hr
+      False.elim (h₂.right hs)
+      )
+      (fun hnr : ¬r =>
+      And.intro hnp hnr)
+    )
+
 
 -- Theorem 6
 -- (a) Modus Ponens (M.P.)
